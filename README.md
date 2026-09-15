@@ -1,7 +1,6 @@
 # caixin-research
 
-一个**跨 agent 通用**的财新内容研究技能（Agent Skill）：支持 ZCode、Claude Code、Codex CLI、Gemini CLI、WorkBuddy、OpenCode 等主流 AI 代理，Windows / macOS / Linux 均可运行（各端安装路径见 [AGENTS.md](AGENTS.md)）：用 ego-browser 复用你已登录的
-财新会员会话，完成「站内检索 → 全文抓取 → 逐篇精读 → 综合报道」的一条龙研究流程。
+一个**跨 agent 通用**的财新内容研究技能（Agent Skill）：支持 ZCode、Claude Code、Codex CLI、Gemini CLI、WorkBuddy、OpenCode 等主流 AI 代理，Windows / macOS / Linux 均可运行（各端安装路径见 [AGENTS.md](AGENTS.md)）：复用你已登录财新会员的浏览器会话（macOS 经 ego-browser，Windows/Linux 经 Edge over CDP），完成「站内检索 → 全文抓取 → 逐篇精读 → 综合报道」的一条龙研究流程。
 
 > 仅利用你自己的会员权限正常阅读，不做任何绕过付费墙的处理；请遵守财新用户协议，
 > 抓取内容仅限个人研究使用，请勿公开传播原文。
@@ -28,7 +27,10 @@ caixin-research/
 │   └── edge-driver.md         # Edge CDP 驱动指南（Windows/Linux 及无 ego 环境的常规路径）
 ├── scripts/
 │   ├── caixin.mjs             # 跨平台检索/抓取 CLI（Edge/任何 Chromium over CDP）
-│   └── package.json           # 依赖 playwright-core，npm install 一次即可
+│   ├── package.json           # 依赖 playwright-core（Node ≥ 20），npm install 一次即可
+│   └── package-lock.json
+├── tests/
+│   └── windows-test.md        # Windows 真机验收清单（可交给任何 agent 执行）
 ├── README.md
 └── LICENSE
 ```
@@ -37,7 +39,7 @@ caixin-research/
 
 - 任一支持 markdown 技能文件的 AI 代理（ZCode / Claude Code / Codex CLI / Gemini CLI / WorkBuddy / OpenCode 等）；
 - 浏览器二选一（skill 会优先复用宿主现成的浏览器控制设施，都没有时用自带方案）：
-  - **Edge + Node.js ≥18**（Windows/Linux 推荐，macOS 亦可用）：`scripts/caixin.mjs`
+  - **Edge + Node.js ≥ 20**（Windows/Linux 推荐，macOS 亦可用）：`scripts/caixin.mjs`
     经 CDP 驱动 Edge，复用你登录的财新会话，详见 [references/edge-driver.md](references/edge-driver.md)；
   - **ego-browser**（macOS，宿主已装时优先）：会话复用逻辑相同；
 - 对应浏览器里已登录**财新会员**账号（技能只读你已授权的内容）。

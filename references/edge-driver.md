@@ -7,7 +7,7 @@ Node 通过 CDP（playwright-core `connectOverCDP`）连接，复用浏览器内
 
 ## 一次性准备
 
-1. 安装 Node.js ≥ 18（`node -v` 可用）。
+1. 安装 Node.js ≥ 20（`node -v` 可用）。
 2. 安装脚本依赖（只需一次）：
 
 ```bash
@@ -55,6 +55,8 @@ node caixin.mjs grab --url https://weekly.caixin.com/2026-06-20/102455860.html -
 ```
 
 - `--tab`：综合（默认）/ 杂志 / 数据通 / 我闻 / mini；`--sort`：time（默认）/ smart。
+- `--until` 的时间窗截断仅在 `--sort time` 下生效（时间倒序可安全停止翻页）；
+  smart 排序结果乱序，旧文会被逐条跳过但不会提前停页——需要严格时间窗时用 time。
 - `--min`：正文最小字数阈值（默认 500；收录短快讯时可调低，如 `--min 120`）。
 - `--cdp`：调试端口非 9222 时指定，如 `--cdp http://127.0.0.1:9333`
   （或环境变量 `CAIXIN_CDP`）。

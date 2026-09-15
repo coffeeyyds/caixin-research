@@ -8,11 +8,13 @@ Codex CLI、Gemini CLI、WorkBuddy、OpenCode、Amp 等，Windows / macOS / Linu
 
 执行本 skill 的 agent 需要具备：
 
-1. **能运行 shell 命令**（执行 `ego-browser nodejs` 脚本）；
+1. **能运行 shell 命令**（PowerShell / bash / zsh 均可）；
 2. **能读写本地文件**（落盘文章、笔记、报告）；
-3. **已安装 ego-browser CLI**（`ego-browser -h` 可用）。
+3. **浏览器驱动二选一**：已安装 ego-browser CLI（`ego-browser -h` 可用，macOS），
+   **或** Node.js ≥ 20 + 开启远程调试的 Edge（Windows/Linux/macOS 通用，
+   见 [edge-driver.md](references/edge-driver.md)）。
 
-只要满足以上三点，skill 内容与具体客户端无关。
+满足以上条件的任何客户端都能完整执行本 skill。
 
 ## 各客户端安装位置
 
@@ -44,7 +46,7 @@ foreach ($d in @("$HOME\.agents", "$HOME\.claude", "$HOME\.codex", "$HOME\.gemin
 }
 ```
 
-（Windows 若不便使用符号链接，直接 `git clone` 到各客户端自己的 skills 目录也可以。）
+（Junction 无需管理员权限；若仍失败，直接 `git clone` 到各客户端自己的 skills 目录也可以。）
 
 ## frontmatter 兼容性
 
@@ -58,7 +60,7 @@ foreach ($d in @("$HOME\.agents", "$HOME\.claude", "$HOME\.codex", "$HOME\.gemin
 
 - **自带 CDP 路径（Windows/Linux 推荐，macOS 亦可用）**：Edge 以
   `--remote-debugging-port=9222 --user-data-dir=<专用目录>` 启动，
-  `scripts/caixin.mjs`（Node ≥18 + `npm install` 装 playwright-core）通过 CDP 连接，
+  `scripts/caixin.mjs`（Node ≥ 20 + `npm install` 装 playwright-core）通过 CDP 连接，
   复用该 Edge 目录里已登录的财新会员会话。检索/抓取全部走这个命令行工具，
   无平台专有命令，Windows / macOS / Linux 一致。详见 [edge-driver.md](references/edge-driver.md)。
 - **ego 路径（macOS，宿主已装 ego-browser 时）**：`ego-browser nodejs` heredoc 执行，

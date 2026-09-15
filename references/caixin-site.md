@@ -110,7 +110,7 @@ async function grab(page, url, outFile) {
     return {
       title: document.querySelector("h1")?.innerText.trim() || "",
       text: strip(paras.slice(0, end).join("\n\n")),
-      gated: /订阅后继续阅读|登录后 continue/.test(document.body.innerText),
+      gated: /订阅后继续阅读|本文共计\d+字/.test(paras.join("\n\n")),  // 只看正文容器，避免页眉订阅推广位误判
     };
   });
   // 日期以 URL 为准：页面日期格式不统一（ISO 或"年月日"），从 URL 提取最可靠
@@ -172,6 +172,24 @@ async function grab(page, url, outFile) {
   - 返回 `data.articleList[]`，字段含 `title/titleNoFont, url, summary, time(毫秒时间戳),
     mediaName(频道), author`；`data.totalRecords` 为总数。翻页直到 `time` 低于时间窗下限。
   - categoryId 传数字、categoryCode 传字符串，两者都不能省，否则报"参数无效"。
+
+### ego 路径的接口调用片段（在任意财新页面标签上执行）
+
+```js
+// 单页检索（在 ego heredoc 里；page 须停在 *.caixin.com 域）
+const d = await page.evaluate(async ({ payload }) => {
+  const r = await fetch("https://gateway.caixin.com/api/dataplatform/common/search", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(payload),
+    credentials: "include",
+  });
+  return await r.json();
+}, { payload: { categoryId: 119, categoryCode: "20", currentPage: 1, pageSize: 20,
+  sort: 0, timeRange: 0, keyword: "创新药", sysType: "PC_SEARCH" } });
+// d.data.articleList[]：titleNoFont / url / time(毫秒) / mediaName / summary
+// 日期务必按北京时间换算：new Date(a.time + 8*3600e3).toISOString().slice(0,10)
+```
 
 ## 抓取健壮性（2026-09-15 实测教训）
 

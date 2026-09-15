@@ -7,7 +7,7 @@
 ## 0. 环境确认
 
 ```powershell
-node -v          # 需 ≥ v18
+node -v          # 需 ≥ v20
 git --version
 & "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" --version
 ```
@@ -29,7 +29,7 @@ npm install
 ```powershell
 Start-Process "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe" -ArgumentList `
   '--remote-debugging-port=9222',
-  '--user-data-dir=' + "$env:USERPROFILE\.caixin-edge-profile",
+  ('--user-data-dir="' + "$env:USERPROFILE\.caixin-edge-profile" + '"'),
   '--no-first-run','--no-default-browser-check',
   'https://www.caixin.com/'
 Start-Sleep -Seconds 5

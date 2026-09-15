@@ -183,4 +183,5 @@ async function grab(page, url, outFile) {
    财新通会员打开仍是"订阅后继续阅读"——grabs 脚本的 GATED 判定会命中，静默跳过即可。
 5. "余下全文"按钮点击后如正文仍 < 500 字，重试一轮三种文案（下一页余下全文/余下全文/展开全文）。
 6. 路径不要硬编码个人目录：outDir 由调用方按用户工作目录传入；脚本用 Node `node:fs/promises`
-   写盘，win/mac 通用（ego-browser 本身依赖 ego lite，目前为 mac 应用，Windows 可用性以官方为准）。
+   写盘，win/mac 通用。Windows/Linux（或任何没有 ego-browser 的环境）改走
+   [edge-driver.md](edge-driver.md) 的 `scripts/caixin.mjs`（Edge over CDP），配方与本文件一致。

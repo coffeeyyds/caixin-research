@@ -5,9 +5,24 @@ description: 用 ego-browser 检索财新网并抓取文章全文（自动点击
 
 # 财新研究助手
 
-面向已登录财新会员的 ego 浏览器，完成"检索 → 抓全文 → 精读笔记 → 写报道"一条龙。
-全部浏览器操作用 ego-browser；若本会话尚未加载 ego-browser skill，先调用它再动手。
-财新网站的具体机制（搜索 API、展开按钮、正文选择器、已验证代码片段）见
+面向已登录财新会员的浏览器会话，完成"检索 → 抓全文 → 精读笔记 → 写报道"一条龙。
+
+## 浏览器驱动选择（先现成，后自带）
+
+按以下顺序确定驱动，选定后整个任务不再切换：
+
+1. **宿主环境现成的浏览器控制设施**：已加载 ego-browser skill（`ego-browser -h` 可用）→
+   用 ego 路径，操作细节见 [references/caixin-site.md](references/caixin-site.md)；
+   若宿主有其他可用设施（playwright MCP、browser-use 等，能 goto/click/evaluate 即可），
+   也可直接用它执行同一套配方（配方与驱动无关，全在 caixin-site.md）。
+2. **都没有时用仓库自带脚本**（Windows/Linux 的常规路径）：Edge 以远程调试模式运行，
+   `scripts/caixin.mjs` 通过 CDP 连接并复用会员会话——安装、启动、命令见
+   [references/edge-driver.md](references/edge-driver.md)。macOS 亦可走这条路。
+
+两条路径共用同一套站点配方（搜索 API、展开按钮、正文选择器、反注入剥离），
+产出物完全一致。
+
+财新网站的具体机制（搜索 API、翻页、展开按钮、正文选择器、已验证代码片段）见
 [references/caixin-site.md](references/caixin-site.md)——动浏览器前必读，不要凭记忆猜选择器。
 
 ## 工作流程
@@ -28,6 +43,8 @@ report.md   # 最终报道（用户要 Word 时再另出 .docx）
 - 入口机制见 references/caixin-site.md 的"搜索 API"节：POST
   `gateway.caixin.com/api/dataplatform/common/search` 可带页码直接拿全量结果
   （页面滚动懒加载 20 条就停，是坑）。标签 categoryId/categoryCode 从 category 接口取。
+  - ego 路径：heredoc 里用 `page.fetch` 调接口（caixin-site.md 有现成片段）；
+  - CDP 路径：`node scripts/caixin.mjs search <关键词> [选项]`（edge-driver.md）。
 - 关键词从长到短：先用完整短语；候选不足再逐步缩短、拆词、换同义词。每轮记录关键词和命中数。
 - **语料选取标准（默认执行，用户特别要求"全都要"时更是硬标准）**：
   - 最近两个月：标题/摘要相关的文章**全量收录**（行情周报、快讯可写简短笔记，不跳过）；
@@ -39,9 +56,12 @@ report.md   # 最终报道（用户要 Word 时再另出 .docx）
 
 ### 2. 抓取全文
 
-用 references/caixin-site.md 的抓取脚本逐篇（每轮 3–5 篇）写入 articles/。注意：
+用对应驱动的抓取配方逐篇写入 articles/：
 
-- 每篇正文直接从 evaluate 结果写盘，**不要把全文打印到上下文**，只打印标题、字数确认。
+- ego 路径：references/caixin-site.md 的 heredoc 脚本（每轮 3–5 篇）；
+- CDP 路径：`node scripts/caixin.mjs grab --list candidates.json --outdir articles --only 1,3,5-9`。
+
+抓取注意事项：- 每篇正文直接从 evaluate 结果写盘，**不要把全文打印到上下文**，只打印标题、字数确认。
 - 单条抓取必须 try/catch（一条失败不能中断整批）；goto 设 20s 超时并容忍失败重试一次。
 - 非标准页面（如 cec.blog.caixin.com 博客镜像没有 .content 结构）直接跳过并记录。
 - 批次结束后 `ls articles/` 核对：数量对不对、文件名有没有写错（以落盘结果为准）。

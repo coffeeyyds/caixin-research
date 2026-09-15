@@ -1,0 +1,9 @@
+{
+  "name": "caixin-research-scripts",
+  "private": true,
+  "type": "module",
+  "description": "Cross-platform Caixin search/grab helper driving Edge (or any Chromium) over CDP.",
+  "dependencies": {
+    "playwright-core": "^1.49.0"
+  }
+}

@@ -1,6 +1,6 @@
 # caixin-research
 
-一个面向 [ZCode](https://github.com/) 的财新内容研究技能（Agent Skill）：用 ego-browser 复用你已登录的
+一个**跨 agent 通用**的财新内容研究技能（Agent Skill）：支持 ZCode、Claude Code、Codex CLI、Gemini CLI、OpenCode 等主流 AI 编码代理（安装路径见 [AGENTS.md](AGENTS.md)），：用 ego-browser 复用你已登录的
 财新会员会话，完成「站内检索 → 全文抓取 → 逐篇精读 → 综合报道」的一条龙研究流程。
 
 > 仅利用你自己的会员权限正常阅读，不做任何绕过付费墙的处理；请遵守财新用户协议，
@@ -21,7 +21,8 @@
 
 ```
 caixin-research/
-├── SKILL.md                   # 技能主流程与硬性规则
+├── SKILL.md                   # 技能主流程与硬性规则（所有 agent 的唯一入口）
+├── AGENTS.md                  # 跨客户端安装说明（ZCode/Claude Code/Codex/Gemini 等）
 ├── references/
 │   └── caixin-site.md         # 财新站点实测机制：搜索 API、展开按钮、选择器、踩坑记录
 ├── README.md
@@ -30,7 +31,7 @@ caixin-research/
 
 ## 前置条件
 
-- [ZCode](https://github.com/) 及其 Agent Skill 机制；
+- 任一支持 markdown 技能文件的 AI 编码代理（ZCode / Claude Code / Codex CLI / Gemini CLI / OpenCode 等）；
 - [ego-browser](https://github.com/)（ego lite 浏览器，当前为 macOS 应用；Windows 支持以官方发布为准）；
 - ego 浏览器内已登录**财新会员**账号（技能只读你已授权的内容）。
 - 注意：财新数据通、金融我闻为独立付费产品，普通财新通会员不可读，技能会静默跳过。
@@ -42,7 +43,8 @@ caixin-research/
 git clone https://github.com/<you>/caixin-research.git ~/.agents/skills/caixin-research
 ```
 
-在 ZCode 中说「帮我用财新研究 <话题>」即可触发，或 `/caixin-research <话题>`。
+通用安装（含 macOS 符号链接与 Windows PowerShell 两种写法）见 [AGENTS.md](AGENTS.md)。
+装好后对 agent 说「帮我用财新研究 <话题>」即可触发（ZCode 中亦可 `/caixin-research <话题>`）。
 
 ## 产出结构
 

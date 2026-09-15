@@ -77,8 +77,9 @@ async function search(keyword) {
   if (!TABS[tabName]) console.error(`警告：未知 --tab "${tabName}"，回退为 综合`);
   const tab = TABS[tabName] || TABS["综合"];
   const sortName = opt("sort", "time");
-  if (!SORTS[sortName]) console.error(`警告：未知 --sort "${sortName}"，回退为 time`);
-  const sort = SORTS[sortName] ?? 0;
+  // SORTS.time === 0，不能用 !SORTS[sortName] 判断（0 会被当成假）
+  if (!(sortName in SORTS)) console.error(`警告：未知 --sort "${sortName}"，回退为 time`);
+  const sort = sortName in SORTS ? SORTS[sortName] : 0;
   const pagesMax = intOpt("pages", 10);
   const until = opt("until", "");
   const { browser, page } = await connectPage();
@@ -195,14 +196,22 @@ async function grab() {
         .replace(/（本文系[\s\S]*?）|本文仅代表作者观点|责任编辑：[^\n]*/g, "")
         .replace(/推荐阅读[\s\S]*$/, "")
         .trim();
-      const paras = [...document.querySelectorAll(".content p")].map(p => p.innerText.trim()).filter(t => t.length > 1);
+      // 跳过 AI 摘要水印段落（p.aitt），避免数据通页被整页清成 0 字
+      const paras = [...document.querySelectorAll(".content p")]
+        .filter(p => !p.classList.contains("aitt"))
+        .map(p => p.innerText.trim())
+        .filter(t => t.length > 1);
       let end = paras.length;
       while (end > 3 && !/[。！？”]"?.?$/.test(paras[end - 1])) end--;
-      const contentText = paras.join("\n\n");
+      const contentText = paras.slice(0, end).join("\n\n");
+      const pageText = document.body?.innerText || "";
+      // 付费墙文案常在按钮/浮层（尤其数据通），不在 .content p 内；需对整页兜底检测
+      const gated = /订阅后继续阅读|本文共计\d+字/.test(contentText)
+        || /订阅后继续阅读|本文共计\d+字/.test(pageText);
       return {
         title: document.querySelector("h1")?.innerText.trim() || "",
         text: strip(contentText),
-        gated: /订阅后继续阅读|本文共计\d+字/.test(contentText),
+        gated,
       };
     });
   };

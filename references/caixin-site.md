@@ -203,3 +203,9 @@ const d = await page.evaluate(async ({ payload }) => {
 6. 路径不要硬编码个人目录：outDir 由调用方按用户工作目录传入；脚本用 Node `node:fs/promises`
    写盘，win/mac 通用。Windows/Linux（或任何没有 ego-browser 的环境）改走
    [edge-driver.md](edge-driver.md) 的 `scripts/caixin.mjs`（Edge over CDP），配方与本文件一致。
+7. 数据通文章（database.caixin.com）的付费墙文案在按钮/浮层上，**不在 `.content p` 内**，
+   且正文容器里主要是 `p.aitt` AI 摘要水印段——判定 GATED 必须对整页兜底扫描
+   "订阅后继续阅读/本文共计N字"，抽取段落要跳过 `p.aitt`，否则会误报 SHORT(0字)。
+   （2026-09-15 Windows 真机实测，复现 URL：database.caixin.com/2026-09-15/102485061.html）
+8. 枚举值含 0 时（如 sort 的 time=0）不能用真假值判断 `!SORTS[x]` 做合法性校验，
+   会把合法值当未知——用 `x in SORTS`。

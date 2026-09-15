@@ -1,6 +1,6 @@
 # caixin-research
 
-一个**跨 agent 通用**的财新内容研究技能（Agent Skill）：支持 ZCode、Claude Code、Codex CLI、Gemini CLI、OpenCode 等主流 AI 编码代理（安装路径见 [AGENTS.md](AGENTS.md)），：用 ego-browser 复用你已登录的
+一个**跨 agent 通用**的财新内容研究技能（Agent Skill）：支持 ZCode、Claude Code、Codex CLI、Gemini CLI、OpenCode 等主流 AI 编码代理（安装路径见 [AGENTS.md](AGENTS.md)）：用 ego-browser 复用你已登录的
 财新会员会话，完成「站内检索 → 全文抓取 → 逐篇精读 → 综合报道」的一条龙研究流程。
 
 > 仅利用你自己的会员权限正常阅读，不做任何绕过付费墙的处理；请遵守财新用户协议，
